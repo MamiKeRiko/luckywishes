@@ -1,12 +1,12 @@
 -- load all files
 
+--globals
+assert(SMODS.load_file('globals.lua'))()
+
 --items
 for _, i in ipairs(NFS.getDirectoryItems(SMODS.current_mod.path..'items')) do
-    assert(SMODS.load_file('items/'..i))
+    assert(SMODS.load_file('items/'..i))()
 end
-
---globals
-assert(SMODS.load_file('globals.lua'))
 
 -- card atlas
 SMODS.Atlas {
@@ -19,8 +19,8 @@ SMODS.Atlas {
 -- type definition
 SMODS.ConsumableType {
     key = 'wish',
-    primary_colour = HEX('6E3AA6'),
-    secondary_colour = HEX('6E3AA6'),
+    primary_colour = L6W.C.main,
+    secondary_colour = L6W.C.secondary,
     collection_rows = {5, 5},
     loc_txt = {
         name = 'Wish Card', 

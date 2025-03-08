@@ -1,8 +1,8 @@
 -- set custom globals
-L6 = {
+L6W = {
     C = {
         main =  HEX('6E3AA6'),
-        secondary = HEX('ffa185')
+        secondary = HEX('a36be8')
     },
 
     funcs = {
