@@ -1,0 +1,16 @@
+{
+	"id": "luckywishes",	
+	"name": "Lucky Wishes",
+	"author": ["LuckySix"],
+	"description": "A new, powerful consumable type that provides passive buffs while held, and run-changing effects when used.",
+	"prefix": "l6w",
+	"main_file": "main.lua",
+	"priority": 0,
+	"badge_colour": "6E3AA6",
+	"badge_text_colour": "FFFFF",
+	"display_name": "Lucky Wishes",
+	"version": "0.1.0~alpha-1",
+	"dependencies": [
+		"Steamodded (>=1.0.0~BETA-0305c)",
+	],
+}
