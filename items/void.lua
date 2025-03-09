@@ -31,7 +31,8 @@ SMODS.Consumable {
             card.ability.extra.last_discard = {}
 
             for _, c in pairs(context.full_hand) do
-                table.insert(card.ability.extra.last_discard, c)
+                local cardinfo = {rank = c:get_id(), suit = c.base.suit}
+                table.insert(card.ability.extra.last_discard, cardinfo)
             end
 
             return {
@@ -40,7 +41,7 @@ SMODS.Consumable {
         end
     end,
     can_use = function (self, card)
-        return (card.ability.extra.rounds_current >= card.ability.extra.rounds_min) and G.hand
+        return (card.ability.extra.rounds_current >= card.ability.extra.rounds_min) and #G.hand.cards > 0
     end,
     use = function (self, card, area, copier)
         if card.ability.extra.last_discard then
@@ -49,14 +50,17 @@ SMODS.Consumable {
                 G.E_MANAGER:add_event(Event({
                     func = function ()
 
-                        local newc = copy_card(c, nil)
+                        local enh = SMODS.poll_enhancement({type_key = 'voidenh', guaranteed = true})
+                        local lookup_string = L6W.funcs.parse_suit(c.suit) .. '_' .. L6W.funcs.parse_id_to_rank(c.rank)
+
+                        local newc = create_playing_card({
+                            front = G.P_CARDS[lookup_string], 
+                            center = G.P_CENTERS[enh]
+                        },
+                        G.hand, false, false, {L6W.C.secondary})
                         
                         newc:set_seal(SMODS.poll_seal({type_key = 'voidseal', guaranteed = true}))
-                        newc:set_enhancement(SMODS.poll_enhancement({type_key = 'voidenh', guaranteed = true}))
                         newc:set_edition(poll_edition('voidedit', 1, true, true))
-                        newc:add_to_deck()
-
-                        G.hand:emplace(newc)
 
                         return true
 
