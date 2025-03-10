@@ -9,23 +9,14 @@ SMODS.Consumable {
     config = {extra = { rounds_current = 0, rounds_min = 2, last_discard = {} }},
     loc_vars = function(self, info_queue, card)
         return{ vars = {
-            card.ability.extra.rounds_min, card.ability.extra.rounds_current, colours = {L6W.C.secondary}
+            card.ability.extra.rounds_min, 
+            card.ability.extra.rounds_current, 
+            colours = {L6W.C.secondary}
         }}
     end,
     calculate = function (self, card, context)
         if context.end_of_round and not context.other_card then
-            card.ability.extra.rounds_current = card.ability.extra.rounds_current + 1
-            if card.ability.extra.rounds_current >= card.ability.extra.rounds_min then
-                local eval = function(card) return not card.REMOVED end
-                juice_card_until(card, eval, true)
-                return {
-                    message = localize('k_active_ex')
-                }
-            else
-                return {
-                    message = card.ability.extra.rounds_current .. '/' .. card.ability.extra.rounds_min
-                }
-            end
+            return L6W.funcs.increase_round_counter(card)
         elseif context.discard and G.GAME.current_round.discards_used == 0 then
             
             card.ability.extra.last_discard = {}
@@ -41,7 +32,7 @@ SMODS.Consumable {
         end
     end,
     can_use = function (self, card)
-        return (card.ability.extra.rounds_current >= card.ability.extra.rounds_min) and #G.hand.cards > 0
+        return (card.ability.extra.rounds_current >= card.ability.extra.rounds_min) and (#G.hand.cards > 0)
     end,
     use = function (self, card, area, copier)
         if card.ability.extra.last_discard then
