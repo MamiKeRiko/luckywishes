@@ -8,7 +8,7 @@ SMODS.Consumable {
     },
     config = {extra = { rounds_current = 0, rounds_min = 10, xmult_add = 0.1 }},
     loc_vars = function(self, info_queue, card)
-        info_queue[#info_queue+1] = 'c_soul'
+        info_queue[#info_queue+1] = G.P_CENTERS.c_soul
         return{ vars = {
             card.ability.extra.rounds_min, 
             card.ability.extra.rounds_current, 
@@ -20,10 +20,10 @@ SMODS.Consumable {
         if context.end_of_round and not context.other_card then
             return L6W.funcs.increase_round_counter(card)
         elseif context.individual and context.cardarea == G.play then
-            context.other_card.ability.perma_x_mult = context.other_card.ability.perma_x_mult or 1
+            context.other_card.ability.perma_x_mult = context.other_card.ability.perma_x_mult or 0
             context.other_card.ability.perma_x_mult = context.other_card.ability.perma_x_mult + card.ability.extra.xmult_add
             return {
-                message = localize{type = 'variable', key = 'a_xmult', vars = {context.other_card.ability.perma_x_mult}}
+                message = localize{type = 'variable', key = 'a_xmult', vars = {(context.other_card.ability.perma_x_mult + 1)}}
             }
         end
     end,

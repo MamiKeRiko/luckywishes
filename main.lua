@@ -2,6 +2,7 @@
 
 --globals
 assert(SMODS.load_file('globals.lua'))()
+assert(SMODS.load_file('sounds.lua'))()
 
 --items
 for _, i in ipairs(NFS.getDirectoryItems(SMODS.current_mod.path..'items')) do

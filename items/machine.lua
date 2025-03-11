@@ -21,23 +21,24 @@ SMODS.Consumable {
         if context.end_of_round and not context.other_card then
             return L6W.funcs.increase_round_counter(card)
         elseif context.individual and context.cardarea == G.play then
+            
+            local c = context.other_card
+
             local multiplier = card.ability.extra.playing_min_mult + (pseudorandom('machine_p') * (card.ability.extra.playing_max_mult - card.ability.extra.playing_min_mult)) -- hacky method to get a number between 0.75 and 1.5
             multiplier = tonumber(string.format("%.2f", multiplier)) -- hacky method to round to 2 decimals
-            L6W.funcs.xmult_playing_card(context.other_card, multiplier)
+            L6W.funcs.xmult_playing_card(c, multiplier)
 
+            local sound
             local sound_weight = pseudorandom('machine_sound')
             if sound_weight > 0.7 then
-                play_sound('l6w_machine1')
+                sound = 'l6w_machine1'
             elseif sound_weight > 0.3 then
-                play_sound('l6w_machine2')
+                sound = 'l6w_machine2'
             else
-                play_sound('l6w_machine3')
+                sound = 'l6w_machine3'
             end
 
-            return {
-                message = 'X'..multiplier,
-                card = context.other_card
-            }
+            return { message = 'X'..multiplier, card = c, sound = sound }
         end
     end,
     can_use = function (self, card)
