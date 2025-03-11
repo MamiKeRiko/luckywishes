@@ -34,6 +34,16 @@ return {
                     '{C:inactive}Rounds: [#2#/#1#]'
                 }
             },
+            c_l6w_warrior = {
+                name = 'Warrior',
+                text = {
+                    '{V:1}While held:{} all scored cards',
+                    'permanently gain {X:mult,C:white}X#3#{} Mult',
+                    '{V:1}After #1# Rounds:{} use to create',
+                    'a {C:dark_edition}Negative{} copy of {C:spectral}The Soul{}',
+                    '{C:inactive}Rounds: [#2#/#1#]'
+                }
+            },
         }
     }
 }
