@@ -111,38 +111,13 @@ L6W = {
         xmult_playing_card = function(card, mult)
             local tablein = { -- hoo boy here we go
                 nominal = card.base.nominal,
-                bonus = card.ability.bonus, 
-                x_chips = card.ability.x_chips ~= 1 and card.ability.x_chips or nil,
-                mult = card.ability.mult,
-                x_mult = card.ability.x_mult ~= 1 and card.ability.x_mult or nil,
-                p_dollars = card.ability.p_dollars,
-                h_chips = card.ability.h_chips,
-                h_x_chips = card.ability.h_x_chips ~= 1 and card.ability.h_x_chips or nil,
-                h_mult = card.ability.h_mult,
-                h_x_mult = card.ability.h_x_mult ~= 1 and card.ability.h_x_mult or nil,
-                h_dollars = card.ability.h_dollars,
-
-                perma_bonus = card.ability.perma_bonus,
-                perma_mult = card.ability.perma_mult,
-                perma_x_chips = card.ability.perma_x_chips ~= 1 and card.ability.perma_x_chips or nil,
-                perma_x_mult = card.ability.perma_x_mult ~= 1 and card.ability.perma_x_mult or nil,
-                perma_p_dollars = card.ability.perma_p_dollars,
-                perma_h_chips = card.ability.perma_h_chips,
-                perma_h_mult = card.ability.perma_h_mult,
-                perma_h_x_chips = card.ability.perma_h_x_chips ~= 1 and card.ability.perma_h_x_chips or nil,
-                perma_h_x_mult = card.ability.perma_h_x_mult ~= 1 and card.ability.perma_h_x_mult or nil,
-                perma_h_dollars = card.ability.perma_h_dollars
+                ability = card.ability
             }
 
             L6W.funcs.mod_card_values(tablein, {multiply = mult})
 
-            for k, v in pairs(tablein) do
-                if k == 'nominal' then
-                    card.base.nominal = v
-                else
-                    card.ability[k] = v
-                end
-            end
+            card.base.nominal = tablein.nominal
+            card.base.ability = tablein.ability
         end,
 
         increase_round_counter = function (card)
@@ -153,11 +128,20 @@ L6W = {
                 return {
                     message = localize('k_active_ex')
                 }
-            else
+            elseif card.ability.extra.rounds_current < card.ability.extra.rounds_min + 2 then
                 return {
                     message = card.ability.extra.rounds_current .. '/' .. card.ability.extra.rounds_min
                 }
+            else
+                G.E_MANAGER.add_event(Event({
+                    func = function ()
+                        card:start_dissolve()
+                    end
+                }))
+                return {
+                    message = localize('k_l6_wither')
+                }
             end
-        end
+        end,
     }
 }

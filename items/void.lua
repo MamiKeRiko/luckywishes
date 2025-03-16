@@ -11,6 +11,7 @@ SMODS.Consumable {
         return{ vars = {
             card.ability.extra.rounds_min, 
             card.ability.extra.rounds_current, 
+            card.ability.extra.rounds_min + 2,
             colours = {L6W.C.secondary}
         }}
     end,

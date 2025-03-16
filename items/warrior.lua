@@ -11,7 +11,8 @@ SMODS.Consumable {
         info_queue[#info_queue+1] = G.P_CENTERS.c_soul
         return{ vars = {
             card.ability.extra.rounds_min, 
-            card.ability.extra.rounds_current, 
+            card.ability.extra.rounds_current,
+            card.ability.extra.rounds_min + 2,
             card.ability.extra.xmult_add,
             colours = {L6W.C.secondary}
         }}
