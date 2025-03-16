@@ -122,22 +122,18 @@ L6W = {
 
         increase_round_counter = function (card)
             card.ability.extra.rounds_current = card.ability.extra.rounds_current + 1
-            if card.ability.extra.rounds_current >= card.ability.extra.rounds_min then
+            if card.ability.extra.rounds_current < card.ability.extra.rounds_min then
+                return {
+                    message = card.ability.extra.rounds_current .. '/' .. card.ability.extra.rounds_min
+                }
+            elseif card.ability.extra.rounds_current < card.ability.extra.rounds_min + 2 then
                 local eval = function(card) return not card.REMOVED end
                 juice_card_until(card, eval, true)
                 return {
                     message = localize('k_active_ex')
                 }
-            elseif card.ability.extra.rounds_current < card.ability.extra.rounds_min + 2 then
-                return {
-                    message = card.ability.extra.rounds_current .. '/' .. card.ability.extra.rounds_min
-                }
             else
-                G.E_MANAGER.add_event(Event({
-                    func = function ()
-                        card:start_dissolve()
-                    end
-                }))
+                card:start_dissolve()
                 return {
                     message = localize('k_l6_wither')
                 }
