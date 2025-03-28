@@ -2,11 +2,11 @@ SMODS.Consumable {
     key = 'machine',
     set = 'wish',
     atlas = 'L6Wish',
-    pos = {x = 0, y = 0},
+    pos = {x = 1, y = 0},
     pools = {
         ['wish'] = true
     },
-    config = { extra = { rounds_current = 0, rounds_min = 5, playing_min_mult = 0.75, playing_max_mult = 1.5, joker_mult = 2 } },
+    config = { extra = { rounds_current = 0, rounds_min = 5, playing_min_mult = 0.9, playing_max_mult = 1.5, joker_mult = 2 } },
     loc_vars = function(self, info_queue, card)
         return{ vars = {
             card.ability.extra.rounds_min, 

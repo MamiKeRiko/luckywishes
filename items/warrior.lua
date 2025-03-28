@@ -2,7 +2,7 @@ SMODS.Consumable {
     key = 'warrior',
     set = 'wish',
     atlas = 'L6Wish',
-    pos = {x = 0, y = 0},
+    pos = {x = 0, y = 1},
     pools = {
         ['wish'] = true
     },

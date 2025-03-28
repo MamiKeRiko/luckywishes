@@ -40,7 +40,7 @@ L6W = {
                 delay = ((i - 1) * t) + (amount * t), -- after all the cards are done flipping, start flipping again from the start
                 blockable = false,
                 func = function()
-                    if not context.individual and not context.cardarea == G.play and not context.other_card == card then return false end
+                    if context and (not context.individual and not context.cardarea == G.play and not context.other_card == card) then return false end
                     G.E_MANAGER:add_event(Event({
                         blockable = false,
                         trigger = 'after',
@@ -103,34 +103,39 @@ L6W = {
             return hand
         end,
 
-        --- Credit to Aikoyori for this function. Given a `table_in` (value table or card object) and a config table,
-        --- modifies the values in `table_in` depending on the `config` provided. `config` accepts these values:
+        --- Credit to Aikoyori for this function, and RenSnek for expanding it. Given a `table_in` (value table or card object) and a config table, modifies the values in `table_in` depending 
+        --- on the `config` provided. `config` accepts these values:
         --- * `add`
         --- * `multiply`
         --- * `keywords`: list of specific values to change in `table_in`. If nil, change every value in `table_in`.
+        --- * `unkeywords`: list of specific values to *not* change in `table_in`.
+        --- * `x_protect`: if true (or not set), any Xmult effects whose value is currently 1 are not modified. If false, this check is bypassed - which may result in some unlisted values being 
+        --- applied.
         --- * `reference`: initial values for the provided table. If nil, defaults to `table_in`.
         --- 
-        --- This function scans all sub-table for numeric values, so it's recommended to pass the card's ability table
-        --- rather than the entire card object.
+        --- This function scans all sub-tables for numeric values, so it's recommended to pass the card's ability table rather than the entire card object.
         ---@param table_in table|Card
         ---@param config table
-        mod_card_values = function(table_in, config)
-             -- thanks aikoyori for this func
+        mod_card_values = function (table_in, config)
             if not config then config = {} end
             local add = config.add or 0
             local multiply = config.multiply or 1
             local keywords = config.keywords or {}
+            local unkeyword = config.unkeywords or {}
+            local x_protect = config.x_protect or true -- If true and a key starts with x_ and the value is 1, it won't multiply
             local reference = config.reference or table_in
             local function modify_values(table_in, ref)
-                for k, v in pairs(table_in) do
-                    if type(v) == "number" then
-                        if keywords[k] or #keywords < 1 then
-                            if ref[k] then
-                                table_in[k] = (ref[k] + add) * multiply
+                for k,v in pairs(table_in) do -- For key, value in the table
+                    if type(v) == "number" then -- If it's a number
+                        if (keywords[k] or (REND.table_true_size(keywords) < 1)) and not unkeyword[k] then -- If it's in the keywords, OR there's no keywords and it isn't in the unkeywords
+                            if ref and ref[k] then -- If it exists in the reference
+                                if not (x_protect and (REND.starts_with(k,"x_") or REND.starts_with(k,"h_x_")) and ref[k] == 1) then
+                                    table_in[k] = (ref[k] + add) * multiply -- Set it to (reference's value + add) * multiply
+                                end
                             end
                         end
-                    elseif type(v) == "table" then
-                        modify_values(v, ref[k])
+                    elseif type(v) == "table" then -- If it's a table
+                        modify_values(v, ref[k]) -- Recurse for values in the table
                     end
                 end
             end
@@ -144,7 +149,7 @@ L6W = {
         ---@param card table|Card
         ---@param mult number
         xmult_playing_card = function(card, mult)
-            local tablein = { -- hoo boy here we go
+            local tablein = {
                 nominal = card.base.nominal,
                 ability = card.ability
             }
@@ -152,7 +157,7 @@ L6W = {
             L6W.funcs.mod_card_values(tablein, {multiply = mult})
 
             card.base.nominal = tablein.nominal
-            card.base.ability = tablein.ability
+            card.ability = tablein.ability
         end,
 
         --- Handles end of round logic for wish cards, increasing the round value and applying effects and 
@@ -178,5 +183,87 @@ L6W = {
                 }
             end
         end,
+
+        --- Given the `key` of an enhancement, get its localized name and corresponding UI color.
+        ---@param key string
+        ---@return string, table
+        get_enhancement_name_and_color = function (key)
+
+            local locName = localize({type = 'name_text', set = 'Enhanced', key = key, nodes = {}})
+            
+            if key == 'm_gold' or key == 'm_lucky' then
+                return locName, G.C.GOLD
+            elseif key == 'm_steel' or key == 'm_glass' or key == 'm_stone' then
+                return locName, G.C.GREY
+            elseif key == 'm_mult' then
+                return locName, G.C.MULT
+            elseif key == 'm_bonus' then
+                return locName, G.C.BONUS
+            else
+                return locName, G.C.SECONDARY_SET['Enhanced']
+            end
+        end,
+
+        --- Given a voucher's `key`, creates and redeems the voucher instantly.
+        ---@param key string
+        redeem_voucher = function (key)
+            -- copied from cryptid which copied from betmma
+            local area
+            if G.STATE == G.STATES.HAND_PLAYED then
+                if not G.redeemed_vouchers_during_hand then
+                    G.redeemed_vouchers_during_hand = CardArea(
+                        G.play.T.x,
+                        G.play.T.y,
+                        G.play.T.w,
+                        G.play.T.h,
+                        { type = "play", card_limit = 5 }
+                    )
+                end
+                area = G.redeemed_vouchers_during_hand
+            else
+                area = G.play
+            end
+
+            local card = SMODS.add_card({set = 'Voucher', area = area, key = key})
+            card.cost = 0
+            card.shop_voucher = false
+
+            local current_round_voucher = G.GAME.current_round.voucher
+            card:redeem()
+            G.GAME.current_round.voucher = current_round_voucher
+
+            G.E_MANAGER:add_event(Event({
+                trigger = "after",
+                delay = 0,
+                func = function()
+                    card:start_dissolve()
+                    return true
+                end,
+            }))
+        end
     }
 }
+
+-- couple util funcs nabbed from https://github.com/RenSnek/Balatro-Rendoms :33
+REND = {}
+
+REND.starts_with = function(str,start)
+    return str:sub(1, #start) == start
+end
+
+REND.table_contains = function(table,value)
+    for i = 1,#table do
+        if (table[i] == value) then
+            return true
+        end
+    end
+    return false
+end
+
+REND.table_true_size = function(table)
+    local n = 0
+    for k,v in pairs(table) do
+        n = n+1
+    end
+    return n
+end
