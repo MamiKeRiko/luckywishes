@@ -1,5 +1,5 @@
 SMODS.Atlas{
-    key = "L6Booster",
+    key = "Boosters",
     path = "Boosters.png",
     px = 71,
     py = 95
@@ -21,8 +21,8 @@ SMODS.Booster{
     end,
     group_key = 'k_l6w_wishespack',
     cost = 4,
-    weight = 0.2,
-    atlas = "L6Booster",
+    weight = 0.25,
+    atlas = "Boosters",
     pos = {x = 0, y = 0},
     create_card = function(self, card, i)
         return SMODS.create_card({set = 'wish', skip_materialize = true})
@@ -50,8 +50,8 @@ SMODS.Booster{
     end,
     group_key = 'k_l6w_wishespack',
     cost = 4,
-    weight = 0.2,
-    atlas = "L6Booster",
+    weight = 0.25,
+    atlas = "Boosters",
     pos = {x = 0, y = 0},
     create_card = function(self, card, i)
         return SMODS.create_card({set = 'wish', skip_materialize = true})
@@ -79,8 +79,8 @@ SMODS.Booster{
     end,
     group_key = 'k_l6w_wishespack',
     cost = 6,
-    weight = 0.15,
-    atlas = "L6Booster",
+    weight = 0.2,
+    atlas = "Boosters",
     pos = {x = 0, y = 0},
     create_card = function(self, card, i)
         return SMODS.create_card({set = 'wish', skip_materialize = true})
@@ -108,8 +108,8 @@ SMODS.Booster{
     end,
     group_key = 'k_l6w_wishespack',
     cost = 8,
-    weight = 0.08,
-    atlas = "L6Booster",
+    weight = 0.1,
+    atlas = "Boosters",
     pos = {x = 0, y = 0},
     create_card = function(self, card, i)
         return SMODS.create_card({set = 'wish', skip_materialize = true})

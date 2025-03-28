@@ -1,8 +1,9 @@
 -- load all files
 
---globals
+--main files
 assert(SMODS.load_file('globals.lua'))()
 assert(SMODS.load_file('sounds.lua'))()
+assert(SMODS.load_file('boosters.lua'))()
 
 --items
 for _, i in ipairs(NFS.getDirectoryItems(SMODS.current_mod.path..'items')) do
@@ -53,16 +54,3 @@ function Card:set_ability(center, initial, delay_sprites)
         SMODS.calculate_context({l6_enhancement_applied = center, other_card = self}, effects)
     end
 end
-
--- booster music
-SMODS.Sound {
-    key = 'musicwishes',
-    path = 'music_wishes.ogg',
-    pitch = 0.7,
-    volume = 1,
-    select_music_track = function (self)
-        if G.STATE == G.STATES.SMODS_BOOSTER_OPENED and SMODS.OPENED_BOOSTER.config.center.group_key == 'k_l6w_wishespack' then
-            return 1000
-        end
-    end
-}
