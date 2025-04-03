@@ -50,5 +50,8 @@ SMODS.Consumable {
             L6W.funcs.mod_card_values(j.ability, {multiply = card.ability.extra.joker_mult})
             SMODS.calculate_effect({message = 'X'..card.ability.extra.joker_mult}, j)
         end
+    end,
+    draw = function (self, card, layer)
+        card:draw_shader('booster', nil, self.ARGS.send_to_shader)
     end
 }

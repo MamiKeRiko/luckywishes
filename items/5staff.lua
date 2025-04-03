@@ -12,7 +12,7 @@ SMODS.Consumable {
         if card.ability.extra.last_enhancement ~= 'none' then
             enhName, enhColor = L6W.funcs.get_enhancement_name_and_color(card.ability.extra.last_enhancement)
         else
-            enhName = card.ability.extra.last_enhancement
+            enhName = 'none'
             enhColor = G.C.PURPLE
         end
 
@@ -49,5 +49,8 @@ SMODS.Consumable {
                 end)
             end
         end
+    end,
+    draw = function (self, card, layer)
+        card:draw_shader('booster', nil, self.ARGS.send_to_shader)
     end
 }

@@ -42,5 +42,8 @@ SMODS.Consumable {
             message = localize('k_level_up_ex')
             },
         card)
+    end,
+    draw = function (self, card, layer)
+        card:draw_shader('booster', nil, self.ARGS.send_to_shader)
     end
 }

@@ -7,7 +7,7 @@ L6W = {
 
     funcs = {
         
-        --- Given an `amount` of cards, an index `i` of the current's card position 
+        --- Given an `amount` of cards, an index `i` of the current card's position 
         --- in this group of cards, and a delay `t` between each card being flipped,
         --- flips `card`, performs `function` while `card` is flipped, and un-flips `card`.
         --- @param card table
@@ -127,9 +127,9 @@ L6W = {
             local function modify_values(table_in, ref)
                 for k,v in pairs(table_in) do -- For key, value in the table
                     if type(v) == "number" then -- If it's a number
-                        if (keywords[k] or (REND.table_true_size(keywords) < 1)) and not unkeyword[k] then -- If it's in the keywords, OR there's no keywords and it isn't in the unkeywords
+                        if (keywords[k] or (L6W.REND.table_true_size(keywords) < 1)) and not unkeyword[k] then -- If it's in the keywords, OR there's no keywords and it isn't in the unkeywords
                             if ref and ref[k] then -- If it exists in the reference
-                                if not (x_protect and (REND.starts_with(k,"x_") or REND.starts_with(k,"h_x_")) and ref[k] == 1) then
+                                if not (x_protect and (L6W.REND.starts_with(k,"x_") or L6W.REND.starts_with(k,"h_x_")) and ref[k] == 1) then
                                     table_in[k] = (ref[k] + add) * multiply -- Set it to (reference's value + add) * multiply
                                 end
                             end
@@ -207,7 +207,7 @@ L6W = {
         --- Given a voucher's `key`, creates and redeems the voucher instantly.
         ---@param key string
         redeem_voucher = function (key)
-            -- copied from cryptid which copied from betmma
+            -- copied from cryptid which copied from betmma :V
             local area
             if G.STATE == G.STATES.HAND_PLAYED then
                 if not G.redeemed_vouchers_during_hand then
@@ -230,6 +230,7 @@ L6W = {
 
             local current_round_voucher = G.GAME.current_round.voucher
             card:redeem()
+            table.insert(G.GAME.used_vouchers, key)
             G.GAME.current_round.voucher = current_round_voucher
 
             G.E_MANAGER:add_event(Event({
@@ -244,14 +245,22 @@ L6W = {
     }
 }
 
--- couple util funcs nabbed from https://github.com/RenSnek/Balatro-Rendoms :33
-REND = {}
+-- couple util funcs nabbed from https://github.com/RenSnek/Balatro-Rendoms :33 (nested into L6W to avoid compatibility issues)
+L6W.REND = {}
 
-REND.starts_with = function(str,start)
+--- Credit to RenSnek. Given a string `str` and a shorter string `start`, checks if the string's first `#start` characters are the same as `start`.
+---@param str string
+---@param start string
+---@return boolean
+L6W.REND.starts_with = function(str,start)
     return str:sub(1, #start) == start
 end
 
-REND.table_contains = function(table,value)
+--- Credit to RenSnek. Given a `table` and a `value`, returns true if `value` is found in `table`.
+---@param table table
+---@param value any
+---@return boolean
+L6W.REND.table_contains = function(table,value)
     for i = 1,#table do
         if (table[i] == value) then
             return true
@@ -260,7 +269,10 @@ REND.table_contains = function(table,value)
     return false
 end
 
-REND.table_true_size = function(table)
+--- Credit to RenSnek. Given a table, returns a more accurate estimate of its size than the `#` operator.
+---@param table table
+---@return number
+L6W.REND.table_true_size = function(table)
     local n = 0
     for k,v in pairs(table) do
         n = n+1
