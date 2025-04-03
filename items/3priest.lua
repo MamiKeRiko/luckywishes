@@ -44,6 +44,6 @@ SMODS.Consumable {
         card)
     end,
     draw = function (self, card, layer)
-        card:draw_shader('booster', nil, self.ARGS.send_to_shader)
+        card:draw_shader('booster', nil, card.ARGS.send_to_shader)
     end
 }
