@@ -51,6 +51,6 @@ SMODS.Consumable {
         end
     end,
     draw = function (self, card, layer)
-        card.children.center:draw_shader('booster', nil, card.ARGS.send_to_shader)
+        card.children.center:draw_shader('voucher', nil, card.ARGS.send_to_shader)
     end
 }
