@@ -31,11 +31,11 @@ SMODS.Consumable {
         return card.ability.extra.rounds_current >= card.ability.extra.rounds_min
     end,
     use = function (self, card, area, copier)
-        if not REND.table_contains(G.GAME.used_vouchers, 'v_blank') then
+        if not L6W.REND.table_contains(G.GAME.used_vouchers, 'v_blank') then
             L6W.funcs.redeem_voucher('v_blank')
         end
 
-        if not REND.table_contains(G.GAME.used_vouchers, 'v_antimatter') then
+        if not L6W.REND.table_contains(G.GAME.used_vouchers, 'v_antimatter') then
             L6W.funcs.redeem_voucher('v_antimatter')
         end
         
